@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/inventario}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+security:
+  jwt:
+    secret: "MI_CLAVE_SECRETA_SUPER_LARGA_Y_SEGURA_DE_AL_MENOS_32_CARACTERES"
+    expiration: 86400000  # 1 dia en milisegundos
+
+springdoc:
+  api-docs:
+    enabled: true  # Habilita la generacion de documentacion OpenAPI
+  swagger-ui:
+    enabled: true  # Habilita Swagger UI
+    path: /swagger-ui.html  # Ruta de acceso a Swagger UI
+  paths-to-match: "/**"  # Incluye todas las rutas en la documentacion
+
