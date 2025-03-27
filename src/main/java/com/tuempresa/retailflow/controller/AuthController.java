@@ -26,7 +26,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDTO request) {
-        authService.register(request);
-        return ResponseEntity.ok("Usuario registrado exitosamente");
+        try {
+            authService.register(request);
+            return ResponseEntity.ok("Usuario registrado exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al registrar usuario: " + e.getMessage());
+        }
     }
 }

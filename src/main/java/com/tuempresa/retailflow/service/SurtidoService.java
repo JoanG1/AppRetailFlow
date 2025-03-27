@@ -6,8 +6,10 @@ import com.tuempresa.retailflow.entity.Surtido;
 import com.tuempresa.retailflow.entity.SurtidoProducto;
 import com.tuempresa.retailflow.repository.ProductoRepository;
 import com.tuempresa.retailflow.repository.SurtidoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,17 +27,17 @@ public class SurtidoService {
 
     @Transactional
     public Surtido registrarSurtido(SurtidoDTO dto) {
-        System.out.println(dto.getProductos());
+
         Surtido surtido = new Surtido();
         surtido.setFechaSurtido(dto.getFechaSurtido());
 
         List<SurtidoProducto> productosSurtidos = dto.getProductos().stream()
                 .map(item -> {
                     Producto producto = productoRepository.findById(item.getId())
-                            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
 
                     if (producto.getStock() < item.getCantidad()) {
-                        throw new RuntimeException("Stock insuficiente");
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Stock insuficiente para producto " + producto.getNombre());
                     }
 
                     producto.setStock(producto.getStock() - item.getCantidad());

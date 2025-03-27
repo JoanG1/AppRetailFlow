@@ -3,6 +3,8 @@ package com.tuempresa.retailflow.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "productos")
 @Getter
@@ -23,6 +25,9 @@ public class Producto {
 
     @Column(nullable = false)
     private Integer stock;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SurtidoProducto> surtidos;
 
 }
 

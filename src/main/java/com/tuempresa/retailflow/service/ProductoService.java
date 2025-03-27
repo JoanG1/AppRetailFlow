@@ -3,7 +3,9 @@ package com.tuempresa.retailflow.service;
 import com.tuempresa.retailflow.dto.ProductoDTO;
 import com.tuempresa.retailflow.entity.Producto;
 import com.tuempresa.retailflow.repository.ProductoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +24,7 @@ public class ProductoService {
     }
 
     public Producto obtenerProductoPorId(Long id) {
-        return productoRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return productoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
 
     public Producto crearProducto(ProductoDTO dto) {

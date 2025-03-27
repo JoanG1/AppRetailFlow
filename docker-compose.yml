@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   app:
-    build: .  # Asegura que el contexto de construcción es el directorio actual
+    build: .  # Backend
     mem_limit: 512m
     ports:
       - "8080:8080"
@@ -26,4 +28,16 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 10
+
+  frontend:
+    build:
+      context: ../FrontendRetailFlow-main  # 📌 Ruta al frontend
+    ports:
+      - "5173:5174"  # 📌 Exponer Vite en http://localhost:5173
+    volumes:
+      - ../FrontendRetailFlow-main:/app  # Permitir live reload
+      - /app/node_modules  # Evitar problemas con node_modules
+    command: ["npm", "run", "dev", "--", "--host"]
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # Hot reload en Windows
 
