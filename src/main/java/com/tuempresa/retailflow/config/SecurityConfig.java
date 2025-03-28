@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register", "/error", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register","/api/bodegas","/api/bodegas/4","/api/bodegas/1","/api/secciones","/api/secciones/11", "/api/productos-bodega","/api/productos-bodega/stock/1","/api/productos-bodega/bodega/4","/api/productos-bodega/bodega/4/seccion/10","/api/productos-bodega/4", "/error", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
