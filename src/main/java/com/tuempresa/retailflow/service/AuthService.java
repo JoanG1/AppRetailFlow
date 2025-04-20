@@ -1,5 +1,6 @@
 package com.tuempresa.retailflow.service;
 
+import com.tuempresa.retailflow.Enum.Rol;
 import com.tuempresa.retailflow.dto.LoginRequestDTO;
 import com.tuempresa.retailflow.dto.RegisterRequestDTO;
 import com.tuempresa.retailflow.entity.Usuario;
@@ -40,10 +41,11 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario ya existe");
         }
 
+        ;
         Usuario usuario = new Usuario();
         usuario.setUsername(request.getUsername());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
-        usuario.setRol(request.getRole());
+        usuario.setRol(Rol.CLIENTE);
 
         usuarioRepository.save(usuario);
     }

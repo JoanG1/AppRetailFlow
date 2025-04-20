@@ -25,20 +25,18 @@ public class SeccionService {
     private final BodegaRepository bodegaRepository;
 
     // ✅ Obtener todas las secciones
-    public List<SeccionDTO> obtenerTodasLasSecciones() {
-        return seccionRepository.findAll().stream()
-                .map(this::convertirASeccionDTO)
-                .collect(Collectors.toList());
+    public List<Seccion> obtenerTodasLasSecciones() {
+        return seccionRepository.findAll();
     }
 
     // ✅ Obtener una sección por ID
-    public SeccionDTO obtenerSeccionPorId(Long id) {
+    public Seccion obtenerSeccionPorId(Long id) {
         Seccion seccion = seccionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sección no encontrada"));
-        return convertirASeccionDTO(seccion);
+        return seccion;
     }
 
-    public SeccionDTO crearSeccion(SeccionDTO dto) {
+    public Seccion crearSeccion(SeccionDTO dto) {
         if (dto.getBodegaId() == null || dto.getNombre() == null || dto.getNombre().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre y Bodega son obligatorios");
         }
@@ -57,11 +55,11 @@ public class SeccionService {
         seccion.setBodega(bodega);
 
         Seccion seccionGuardada = seccionRepository.save(seccion);
-        return convertirASeccionDTO(seccionGuardada);
+        return seccionGuardada;
     }
 
     // ✅ Actualizar una sección con validaciones
-    public SeccionDTO actualizarSeccion(Long id, SeccionDTO dto) {
+    public Seccion actualizarSeccion(Long id, SeccionDTO dto) {
         if (dto.getNombre() == null || dto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la sección no puede estar vacío.");
         }
@@ -85,7 +83,7 @@ public class SeccionService {
         seccion.setNombre(dto.getNombre());
         seccion.setBodega(bodega);
 
-        return convertirASeccionDTO(seccionRepository.save(seccion));
+        return seccionRepository.save(seccion);
     }
 
     // ✅ Eliminar una sección
@@ -93,32 +91,11 @@ public class SeccionService {
         seccionRepository.deleteById(id);
     }
 
-    // 🔄 Conversión de Entidad a DTO
-    private SeccionDTO convertirASeccionDTO(Seccion seccion) {
-        SeccionDTO dto = new SeccionDTO();
-        dto.setId(seccion.getId());
-        dto.setNombre(seccion.getNombre());
-        dto.setBodegaId(seccion.getBodega().getId());
+    // obtener secciones por bodega
 
-        // 🔹 Verifica si `getProductosEnSeccion()` es null antes de usar stream()
-        List<ProductoBodegaDTO> productosDTO = (seccion.getProductosEnSeccion() != null)
-                ? seccion.getProductosEnSeccion().stream()
-                .map(this::convertirAProductoBodegaDTO)
-                .collect(Collectors.toList())
-                : new ArrayList<>(); // 🔥 Evita el null, devolviendo una lista vacía
-
-        dto.setProductos(productosDTO);
-
-        return dto;
+    public List<Seccion> obtenerSeccionPorBodegaId(Long bodegaId) {
+        return seccionRepository.findByBodegaId(bodegaId);
     }
 
-
-    // 🔄 Conversión de ProductoBodega a ProductoBodegaDTO
-    private ProductoBodegaDTO convertirAProductoBodegaDTO(ProductoBodega productoBodega) {
-        ProductoBodegaDTO dto = new ProductoBodegaDTO();
-        dto.setProductoId(productoBodega.getProducto().getId());
-        dto.setStock(productoBodega.getStock());
-        return dto;
-    }
 }
 

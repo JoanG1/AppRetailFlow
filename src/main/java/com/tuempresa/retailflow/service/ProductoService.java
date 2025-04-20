@@ -5,6 +5,8 @@ import com.tuempresa.retailflow.entity.Producto;
 import com.tuempresa.retailflow.entity.ProductoBodega;
 import com.tuempresa.retailflow.repository.ProductoRepository;
 import com.tuempresa.retailflow.repository.ProductoBodegaRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +27,12 @@ public class ProductoService {
     // ✅ Obtener todos los productos
     public List<Producto> obtenerProductos() {
         return productoRepository.findAll();
+    }
+
+    //Obtener solo los primeros diez productos
+    public List<Producto> obtenerTopProductos() {
+        Pageable topDiez = PageRequest.of(0, 10);
+        return productoRepository.findAll(topDiez).getContent();
     }
 
     // ✅ Obtener producto por ID
@@ -54,11 +62,18 @@ public class ProductoService {
         productoRepository.deleteById(id);
     }
 
-    // ✅ Obtener stock total del producto en todas las bodegas
-    public int obtenerStockTotalPorProducto(Long productoId) {
-        return productoBodegaRepository.findByProductoId(productoId)
-                .stream()
-                .mapToInt(ProductoBodega::getStock)
-                .sum();
+    // ✅ Contar producto
+    public long contarProductos() {
+        return productoRepository.count();
     }
+
+    // ✅ Traer productos no asignados
+
+    public List<Producto> obtenerProductosNoAsignados() {
+        return productoRepository.findProductosNoAsignados();
+    }
+
+
+
+
 }
