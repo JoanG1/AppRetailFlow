@@ -26,6 +26,12 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.obtenerProductos());
     }
 
+    // ✅ Obtener los primeros 10 productos
+    @GetMapping("/top")
+    public ResponseEntity<List<Producto>> obtenerTopProductos() {
+        return ResponseEntity.ok(productoService.obtenerTopProductos());
+    }
+
     // ✅ Obtener producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id) {
@@ -46,16 +52,23 @@ public class ProductoController {
 
     // ✅ Eliminar producto
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
+    public ResponseEntity<String> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("El producto fue eliminado");
     }
 
-    // ✅ Obtener stock total del producto en todas las bodegas
-    @GetMapping("/{id}/stock")
-    public ResponseEntity<Integer> obtenerStockTotal(@PathVariable Long id) {
-        return ResponseEntity.ok(productoService.obtenerStockTotalPorProducto(id));
+    @GetMapping("/total")
+    public ResponseEntity<Long> totalProductos() {
+        Long total = productoService.contarProductos();
+        return ResponseEntity.ok(total);
     }
+
+    @GetMapping("/no-asignados")
+    public ResponseEntity<List<Producto>> obtenerProductosNoAsignados() {
+        List<Producto> productos = productoService.obtenerProductosNoAsignados();
+        return ResponseEntity.ok(productos);
+    }
+
 }
 
 

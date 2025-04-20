@@ -3,6 +3,7 @@ package com.tuempresa.retailflow.controller;
 import com.tuempresa.retailflow.dto.ProductoBodegaDTO;
 import com.tuempresa.retailflow.entity.ProductoBodega;
 import com.tuempresa.retailflow.service.ProductoBodegaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos-bodega")
 @AllArgsConstructor
+@SecurityRequirement(name = "BearerAuth")
 public class ProductoBodegaController {
 
     private final ProductoBodegaService productoBodegaService;
@@ -46,6 +48,12 @@ public class ProductoBodegaController {
     public ResponseEntity<Void> eliminarProductoDeBodega(@PathVariable Long productoBodegaId) {
         productoBodegaService.eliminarProductoDeBodega(productoBodegaId);
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ Obtener productos por bodega y sección
+    @GetMapping("/seccion/{seccionId}")
+    public ResponseEntity<List<ProductoBodegaDTO>> obtenerProductosPorSeccion(@PathVariable Long seccionId) {
+        return ResponseEntity.ok(productoBodegaService.obtenerProductosPorSeccion(seccionId));
     }
 }
 
