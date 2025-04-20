@@ -10,8 +10,10 @@ import java.util.List;
 @Getter
 @Setter
 public class SurtidoDTO {
+
     private LocalDateTime fechaSurtido;
-    private List<ProductoSurtidoDTO> productos = new ArrayList<>();
+
+    private List<SurtidoProductoDTO> productos;
 
     public SurtidoDTO() {
         this.fechaSurtido = LocalDateTime.now();

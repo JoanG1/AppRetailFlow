@@ -1,13 +1,16 @@
 package com.tuempresa.retailflow.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 public class ProductoBodegaDTO {
+
+    private Long id;
     private Long productoId;
-    private Long bodegaId;
     private Long seccionId;
     private Integer stock;
 }
