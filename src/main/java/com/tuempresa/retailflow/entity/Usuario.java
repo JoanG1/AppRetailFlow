@@ -1,5 +1,6 @@
 package com.tuempresa.retailflow.entity;
 
+import com.tuempresa.retailflow.Enum.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +22,9 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String rol;
+    private Rol rol;
 
 
 }

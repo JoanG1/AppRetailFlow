@@ -23,6 +23,7 @@ public class SurtidoProducto {
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonBackReference
     private Producto producto;
 
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.tuempresa.retailflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +24,8 @@ public class Producto {
     @Column(nullable = false)
     private Double precio;
 
-    @Column(nullable = false)
-    private Integer stock;
-
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<SurtidoProducto> surtidos;
 
 }
