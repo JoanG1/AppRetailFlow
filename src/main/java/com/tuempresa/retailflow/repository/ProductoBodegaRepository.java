@@ -21,6 +21,12 @@ public interface ProductoBodegaRepository extends JpaRepository<ProductoBodega, 
     Optional<ProductoBodega> findByProductoIdAndBodegaIdAndSeccionId(Long productoId, Long bodegaId, Long seccionId);
 
     // ✅ Método para buscar todas las entradas de un producto en cualquier bodega
-    List<ProductoBodega> findByProductoId(Long productoId);
+    @Override
+    Optional<ProductoBodega> findById(Long Id);
+
+    ProductoBodega findByProductoId(Long productoId);
+
+    // Obtener todos los productos de una sección dentro de una bodega
+    List<ProductoBodega> findBySeccionId(Long seccionId);
 
 }

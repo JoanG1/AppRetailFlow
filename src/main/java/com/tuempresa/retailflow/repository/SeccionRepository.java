@@ -5,6 +5,7 @@ import com.tuempresa.retailflow.entity.Bodega;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SeccionRepository extends JpaRepository<Seccion, Long> {
 
@@ -13,4 +14,6 @@ public interface SeccionRepository extends JpaRepository<Seccion, Long> {
 
     // ✅ Verificar si existe una sección con el mismo nombre dentro de la misma bodega
     boolean existsByNombreAndBodega(String nombre, Bodega bodega);
+
+    Optional<Seccion> findByNombre(String nombre);
 }
