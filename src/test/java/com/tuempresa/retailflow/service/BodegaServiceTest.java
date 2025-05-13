@@ -7,6 +7,8 @@ import com.tuempresa.retailflow.entity.ProductoBodega;
 import com.tuempresa.retailflow.entity.Seccion;
 import com.tuempresa.retailflow.repository.BodegaRepository;
 import com.tuempresa.retailflow.repository.SeccionRepository;
+import com.tuempresa.retailflow.testRail.TestRailClient;
+import com.tuempresa.retailflow.testRail.TestRailReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -37,13 +39,41 @@ class BodegaServiceTest {
      */
     @Test
     void obtenerTodasLasBodegas_deberiaRetornarTodasLasBodegas() {
-        List<Bodega> bodegasMock = List.of(new Bodega(), new Bodega());
-        when(bodegaRepository.findAll()).thenReturn(bodegasMock);
+        boolean passed = false;
 
-        List<Bodega> resultado = bodegaService.obtenerTodasLasBodegas();
+        try {
+            // Arrange
+            List<Bodega> bodegasMock = List.of(new Bodega(), new Bodega());
+            when(bodegaRepository.findAll()).thenReturn(bodegasMock);
 
-        assertEquals(2, resultado.size());
-        verify(bodegaRepository).findAll();
+            // Act
+            List<Bodega> resultado = bodegaService.obtenerTodasLasBodegas();
+
+            // Assert
+            assertEquals(2, resultado.size());
+            verify(bodegaRepository).findAll();
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Obtener todas las bodegas devuelve la lista completa",
+                        passed,
+                        "Automatizado - Verificación de obtención total desde repositorio"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -51,13 +81,40 @@ class BodegaServiceTest {
      */
     @Test
     void obtenerBodegaPorId_deberiaRetornarBodegaSiExiste() {
-        Bodega bodega = new Bodega();
-        bodega.setId(1L);
-        when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
+        boolean passed = false;
 
-        Bodega resultado = bodegaService.obtenerBodegaPorId(1L);
+        try {
+            // Arrange
+            Bodega bodega = new Bodega();
+            bodega.setId(1L);
+            when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
 
-        assertEquals(1L, resultado.getId());
+            // Act
+            Bodega resultado = bodegaService.obtenerBodegaPorId(1L);
+
+            // Assert
+            assertEquals(1L, resultado.getId());
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Obtener bodega por ID existente devuelve bodega",
+                        passed,
+                        "Automatizado - Bodega encontrada correctamente por ID"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -65,9 +122,36 @@ class BodegaServiceTest {
      */
     @Test
     void obtenerBodegaPorId_deberiaLanzarExcepcionSiNoExiste() {
-        when(bodegaRepository.findById(1L)).thenReturn(Optional.empty());
+        boolean passed = false;
 
-        assertThrows(RuntimeException.class, () -> bodegaService.obtenerBodegaPorId(1L));
+        try {
+            // Arrange
+            when(bodegaRepository.findById(1L)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(RuntimeException.class, () -> bodegaService.obtenerBodegaPorId(1L));
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Obtener bodega inexistente lanza excepción",
+                        passed,
+                        "Automatizado - Lanzamiento de excepción al no encontrar bodega"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -75,17 +159,45 @@ class BodegaServiceTest {
      */
     @Test
     void crearBodega_deberiaCrearBodegaConSecciones() {
-        CrearBodegaDTO dto = new CrearBodegaDTO();
-        dto.setNombre("Bodega Central");
-        dto.setSecciones(List.of("Frutas", "Verduras"));
+        boolean passed = false;
 
-        when(bodegaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        try {
+            // Arrange
+            CrearBodegaDTO dto = new CrearBodegaDTO();
+            dto.setNombre("Bodega Central");
+            dto.setSecciones(List.of("Frutas", "Verduras"));
 
-        Bodega resultado = bodegaService.crearBodega(dto);
+            when(bodegaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertEquals("Bodega Central", resultado.getNombre());
-        assertEquals(2, resultado.getSecciones().size());
-        assertEquals("Frutas", resultado.getSecciones().get(0).getNombre());
+            // Act
+            Bodega resultado = bodegaService.crearBodega(dto);
+
+            // Assert
+            assertEquals("Bodega Central", resultado.getNombre());
+            assertEquals(2, resultado.getSecciones().size());
+            assertEquals("Frutas", resultado.getSecciones().get(0).getNombre());
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Crear bodega con secciones correctamente",
+                        passed,
+                        "Automatizado - Registro de bodega y creación de secciones"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -93,20 +205,48 @@ class BodegaServiceTest {
      */
     @Test
     void crearBodegaVacia_deberiaCrearBodegaConSeccionPorDefecto() {
-        BodegaDTO dto = new BodegaDTO();
-        dto.setNombre("Nueva Bodega");
+        boolean passed = false;
 
-        Bodega bodegaGuardada = new Bodega();
-        bodegaGuardada.setId(1L);
-        bodegaGuardada.setNombre("Nueva Bodega");
+        try {
+            // Arrange
+            BodegaDTO dto = new BodegaDTO();
+            dto.setNombre("Nueva Bodega");
 
-        when(bodegaRepository.save(any())).thenReturn(bodegaGuardada);
-        when(bodegaRepository.getBodegaById(1L)).thenReturn(Optional.of(bodegaGuardada));
+            Bodega bodegaGuardada = new Bodega();
+            bodegaGuardada.setId(1L);
+            bodegaGuardada.setNombre("Nueva Bodega");
 
-        Bodega resultado = bodegaService.crearBodegaVacia(dto);
+            when(bodegaRepository.save(any())).thenReturn(bodegaGuardada);
+            when(bodegaRepository.getBodegaById(1L)).thenReturn(Optional.of(bodegaGuardada));
 
-        assertEquals("Nueva Bodega", resultado.getNombre());
-        verify(seccionRepository).save(any(Seccion.class));
+            // Act
+            Bodega resultado = bodegaService.crearBodegaVacia(dto);
+
+            // Assert
+            assertEquals("Nueva Bodega", resultado.getNombre());
+            verify(seccionRepository).save(any(Seccion.class));
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Crear bodega vacía con sección por defecto",
+                        passed,
+                        "Automatizado - Verificación de creación con lógica por defecto"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -114,19 +254,46 @@ class BodegaServiceTest {
      */
     @Test
     void actualizarBodega_deberiaActualizarNombre() {
-        Bodega existente = new Bodega();
-        existente.setId(1L);
-        existente.setNombre("Viejo Nombre");
+        boolean passed = false;
 
-        BodegaDTO dto = new BodegaDTO();
-        dto.setNombre("Nuevo Nombre");
+        try {
+            // Arrange
+            Bodega existente = new Bodega();
+            existente.setId(1L);
+            existente.setNombre("Viejo Nombre");
 
-        when(bodegaRepository.findById(1L)).thenReturn(Optional.of(existente));
-        when(bodegaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+            BodegaDTO dto = new BodegaDTO();
+            dto.setNombre("Nuevo Nombre");
 
-        Bodega actualizado = bodegaService.actualizarBodega(1L, dto);
+            when(bodegaRepository.findById(1L)).thenReturn(Optional.of(existente));
+            when(bodegaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertEquals("Nuevo Nombre", actualizado.getNombre());
+            // Act
+            Bodega actualizado = bodegaService.actualizarBodega(1L, dto);
+
+            // Assert
+            assertEquals("Nuevo Nombre", actualizado.getNombre());
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Actualizar nombre de bodega correctamente",
+                        passed,
+                        "Automatizado - Modificación de nombre en entidad Bodega"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -134,19 +301,46 @@ class BodegaServiceTest {
      */
     @Test
     void eliminarBodega_deberiaEliminarSiNoHayProductos() {
-        Bodega bodega = new Bodega();
-        bodega.setId(1L);
+        boolean passed = false;
 
-        Seccion seccion = new Seccion();
-        seccion.setProductosEnSeccion(Collections.emptyList());
+        try {
+            Bodega bodega = new Bodega();
+            bodega.setId(1L);
 
-        when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
-        when(seccionRepository.findByBodegaId(1L)).thenReturn(List.of(seccion));
+            Seccion seccion = new Seccion();
+            seccion.setProductosEnSeccion(Collections.emptyList());
 
-        bodegaService.eliminarBodega(1L);
+            when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
+            when(seccionRepository.findByBodegaId(1L)).thenReturn(List.of(seccion));
 
-        verify(seccionRepository).deleteAll(any());
-        verify(bodegaRepository).deleteById(1L);
+            // Act
+            bodegaService.eliminarBodega(1L);
+
+            // Assert
+            verify(seccionRepository).deleteAll(any());
+            verify(bodegaRepository).deleteById(1L);
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Eliminar bodega sin productos asociados",
+                        passed,
+                        "Automatizado - Eliminación exitosa de bodega sin dependencias"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -154,17 +348,47 @@ class BodegaServiceTest {
      */
     @Test
     void eliminarBodega_deberiaLanzarExcepcionSiTieneProductos() {
-        Bodega bodega = new Bodega();
-        bodega.setId(1L);
 
-        Seccion seccionConProductos = new Seccion();
-        seccionConProductos.setProductosEnSeccion(List.of(new ProductoBodega())); // simula productos
+        boolean passed = false;
+        try{
 
-        when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
-        when(seccionRepository.findByBodegaId(1L)).thenReturn(List.of(seccionConProductos));
+            Bodega bodega = new Bodega();
+            bodega.setId(1L);
 
-        assertThrows(RuntimeException.class, () -> bodegaService.eliminarBodega(1L));
-        verify(bodegaRepository, never()).deleteById(any());
+            Seccion seccionConProductos = new Seccion();
+            seccionConProductos.setProductosEnSeccion(List.of(new ProductoBodega())); // simula productos
+
+            when(bodegaRepository.findById(1L)).thenReturn(Optional.of(bodega));
+            when(seccionRepository.findByBodegaId(1L)).thenReturn(List.of(seccionConProductos));
+
+            assertThrows(RuntimeException.class, () -> bodegaService.eliminarBodega(1L));
+            verify(bodegaRepository, never()).deleteById(any());
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Eliminar bodega con productos asociados",
+                        passed,
+                        "Automatizado - Mensaje de excepcion sobre eliminacion de bodega"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
 }

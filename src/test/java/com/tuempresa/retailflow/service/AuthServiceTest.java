@@ -6,6 +6,8 @@ import com.tuempresa.retailflow.dto.LoginRequestDTO;
 import com.tuempresa.retailflow.dto.RegisterRequestDTO;
 import com.tuempresa.retailflow.entity.Usuario;
 import com.tuempresa.retailflow.repository.UsuarioRepository;
+import com.tuempresa.retailflow.testRail.TestRailClient;
+import com.tuempresa.retailflow.testRail.TestRailReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -39,73 +41,176 @@ class AuthServiceTest {
 
     @Test
     void login_CredencialesCorrectas_devuelveToken() {
-        // Arrange
-        LoginRequestDTO loginRequest = new LoginRequestDTO();
-        loginRequest.setUsername("usuario");
-        loginRequest.setPassword("contrasena");
+        boolean passed = false;
 
-        Usuario usuario = new Usuario(1L, "usuario", "hashedPassword", Rol.CLIENTE);
+        try {
+            // Arrange
+            LoginRequestDTO loginRequest = new LoginRequestDTO();
+            loginRequest.setUsername("usuario");
+            loginRequest.setPassword("contrasena");
 
-        when(usuarioRepository.findByUsername("usuario")).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.matches("contrasena", "hashedPassword")).thenReturn(true);
-        when(jwtService.generateToken("usuario")).thenReturn("jwt-token");
+            Usuario usuario = new Usuario(1L, "usuario", "hashedPassword", Rol.CLIENTE);
 
-        // Act
-        String result = authService.login(loginRequest);
+            when(usuarioRepository.findByUsername("usuario")).thenReturn(Optional.of(usuario));
+            when(passwordEncoder.matches("contrasena", "hashedPassword")).thenReturn(true);
+            when(jwtService.generateToken("usuario")).thenReturn("jwt-token");
 
-        // Assert
-        assertEquals("jwt-token", result);
+            // Act
+            String result = authService.login(loginRequest);
+
+            // Assert
+            assertEquals("jwt-token", result);
+            passed = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Login con credenciales válidas devuelve token",
+                        passed,
+                        "Automatizado - Login correcto con token JWT"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
     void login_CredencialesIncorrectas_lanzaExcepcion() {
-        LoginRequestDTO loginRequest = new LoginRequestDTO();
-        loginRequest.setUsername("usuario");
-        loginRequest.setPassword("contrasena");
+        boolean passed = false;
 
-        Usuario usuario = new Usuario(1L, "usuario", "hashedPassword", Rol.CLIENTE);
+        try {
+            // Arrange
+            LoginRequestDTO loginRequest = new LoginRequestDTO();
+            loginRequest.setUsername("usuario");
+            loginRequest.setPassword("contrasena");
 
-        when(usuarioRepository.findByUsername("usuario")).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.matches("contrasena", "hashedPassword")).thenReturn(false);
+            Usuario usuario = new Usuario(1L, "usuario", "hashedPassword", Rol.CLIENTE);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> authService.login(loginRequest));
+            when(usuarioRepository.findByUsername("usuario")).thenReturn(Optional.of(usuario));
+            when(passwordEncoder.matches("contrasena", "hashedPassword")).thenReturn(false);
 
-        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+            // Act & Assert
+            ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                    () -> authService.login(loginRequest));
+
+            assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Login con credenciales incorrectas lanza excepción",
+                        passed,
+                        "Automatizado - Login inválido con error HTTP 401"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
     void register_UsuarioNuevo_registraCorrectamente() {
-        RegisterRequestDTO registerRequest = new RegisterRequestDTO();
-        registerRequest.setUsername("nuevoUsuario");
-        registerRequest.setPassword("clave");
+        boolean passed = false;
 
-        when(usuarioRepository.findByUsername("nuevoUsuario")).thenReturn(Optional.empty());
-        when(passwordEncoder.encode("clave")).thenReturn("claveCodificada");
+        try {
+            // Arrange
+            RegisterRequestDTO registerRequest = new RegisterRequestDTO();
+            registerRequest.setUsername("nuevoUsuario");
+            registerRequest.setPassword("clave");
 
-        authService.register(registerRequest);
+            when(usuarioRepository.findByUsername("nuevoUsuario")).thenReturn(Optional.empty());
+            when(passwordEncoder.encode("clave")).thenReturn("claveCodificada");
 
-        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
-        verify(usuarioRepository).save(captor.capture());
+            // Act
+            authService.register(registerRequest);
 
-        Usuario usuarioGuardado = captor.getValue();
-        assertEquals("nuevoUsuario", usuarioGuardado.getUsername());
-        assertEquals("claveCodificada", usuarioGuardado.getPassword());
-        assertEquals(Rol.CLIENTE, usuarioGuardado.getRol());
+            // Assert
+            ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
+            verify(usuarioRepository).save(captor.capture());
+
+            Usuario usuarioGuardado = captor.getValue();
+            assertEquals("nuevoUsuario", usuarioGuardado.getUsername());
+            assertEquals("claveCodificada", usuarioGuardado.getPassword());
+            assertEquals(Rol.CLIENTE, usuarioGuardado.getRol());
+
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Registro de usuario nuevo exitoso",
+                        passed,
+                        "Automatizado - Validación de guardado de nuevo cliente"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
     void register_UsuarioExistente_lanzaExcepcion() {
-        RegisterRequestDTO registerRequest = new RegisterRequestDTO();
-        registerRequest.setUsername("usuarioExistente");
-        registerRequest.setPassword("clave");
+        boolean passed = false;
 
-        when(usuarioRepository.findByUsername("usuarioExistente"))
-                .thenReturn(Optional.of(new Usuario()));
+        try {
+            // Arrange
+            RegisterRequestDTO registerRequest = new RegisterRequestDTO();
+            registerRequest.setUsername("usuarioExistente");
+            registerRequest.setPassword("clave");
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> authService.register(registerRequest));
+            when(usuarioRepository.findByUsername("usuarioExistente"))
+                    .thenReturn(Optional.of(new Usuario()));
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+            // Act & Assert
+            ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                    () -> authService.register(registerRequest));
+
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+            passed = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Registro con usuario existente lanza excepción",
+                        passed,
+                        "Automatizado - Registro fallido con usuario duplicado"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

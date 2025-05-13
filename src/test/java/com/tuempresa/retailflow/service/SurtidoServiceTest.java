@@ -4,6 +4,8 @@ import com.tuempresa.retailflow.dto.SurtidoDTO;
 import com.tuempresa.retailflow.dto.SurtidoProductoDTO;
 import com.tuempresa.retailflow.entity.*;
 import com.tuempresa.retailflow.repository.*;
+import com.tuempresa.retailflow.testRail.TestRailClient;
+import com.tuempresa.retailflow.testRail.TestRailReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 class SurtidoServiceTest {
@@ -42,121 +45,288 @@ class SurtidoServiceTest {
 
     @Test
     void testObtenerHistorialSurtidos() {
-        Surtido s1 = new Surtido(1L, new ArrayList<>(), LocalDateTime.now());
-        when(surtidoRepository.findAll()).thenReturn(List.of(s1));
 
-        List<Surtido> resultado = surtidoService.obtenerHistorialSurtidos();
+        boolean passed = false;
+        try{
 
-        assertThat(resultado).hasSize(1);
+            Surtido s1 = new Surtido(1L, new ArrayList<>(), LocalDateTime.now());
+            when(surtidoRepository.findAll()).thenReturn(List.of(s1));
+
+            List<Surtido> resultado = surtidoService.obtenerHistorialSurtidos();
+
+            assertThat(resultado).hasSize(1);
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Obtener Historial Surtido",
+                        passed,
+                        "Automatizado - Verifica que se obtenga correctamente el historial surtido"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
     void testObtenerTopSurtidos() {
-        Surtido s1 = new Surtido(1L, new ArrayList<>(), LocalDateTime.now());
-        Page<Surtido> pagina = new PageImpl<>(List.of(s1));
-        when(surtidoRepository.findAll(any(Pageable.class))).thenReturn(pagina);
 
-        List<Surtido> resultado = surtidoService.obtenerTopSurtidos();
+        boolean passed = false;
+        try{
 
-        assertThat(resultado).hasSize(1);
+            Surtido s1 = new Surtido(1L, new ArrayList<>(), LocalDateTime.now());
+            Page<Surtido> pagina = new PageImpl<>(List.of(s1));
+            when(surtidoRepository.findAll(any(Pageable.class))).thenReturn(pagina);
+
+            List<Surtido> resultado = surtidoService.obtenerTopSurtidos();
+
+            assertThat(resultado).hasSize(1);
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Obtener top surtido",
+                        passed,
+                        "Automatizado - Verifica que se obtenga los primeros surtidos correctamente"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
     void testContarSurtidos() {
-        when(surtidoRepository.count()).thenReturn(10L);
 
-        long count = surtidoService.contarSurtidos();
+        boolean passed = false;
+        try{
 
-        assertThat(count).isEqualTo(10L);
+            when(surtidoRepository.count()).thenReturn(10L);
+
+            long count = surtidoService.contarSurtidos();
+
+            assertThat(count).isEqualTo(10L);
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Contar surtidos",
+                        passed,
+                        "Automatizado - Verifica que se cuenten correctamente los surtidos"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
     void testCrearSurtido() {
-        // DTO de entrada
-        SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
-        productoDTO.setProductoId(1L);
-        productoDTO.setCantidad(5);
-        SurtidoDTO surtidoDTO = new SurtidoDTO();
-        surtidoDTO.setFechaSurtido(LocalDateTime.now());
-        surtidoDTO.setProductos(List.of(productoDTO));
 
-        Long localId = 1L;
+        boolean passed = false;
+        try{
 
-        // Mocks de entidades
-        Producto producto = new Producto();
-        producto.setId(1L);
+            // DTO de entrada
+            SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
+            productoDTO.setProductoId(1L);
+            productoDTO.setCantidad(5);
+            SurtidoDTO surtidoDTO = new SurtidoDTO();
+            surtidoDTO.setFechaSurtido(LocalDateTime.now());
+            surtidoDTO.setProductos(List.of(productoDTO));
 
-        ProductoBodega productoBodega = new ProductoBodega();
-        productoBodega.setProducto(producto);
-        productoBodega.setStock(10);
+            Long localId = 1L;
 
-        Local local = new Local();
-        local.setId(localId);
+            // Mocks de entidades
+            Producto producto = new Producto();
+            producto.setId(1L);
 
-        ProductoLocal productoLocal = new ProductoLocal();
-        productoLocal.setProducto(producto);
-        productoLocal.setLocal(local);
-        productoLocal.setStock(3);
+            ProductoBodega productoBodega = new ProductoBodega();
+            productoBodega.setProducto(producto);
+            productoBodega.setStock(10);
 
-        // Simular llamadas
-        when(localRepository.findById(localId)).thenReturn(Optional.of(local));
-        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
-        when(productoBodegaRepository.findByProductoId(1L)).thenReturn(productoBodega);
-        when(productoLocalRepository.findByProductoIdAndLocalId(1L, localId)).thenReturn(Optional.of(productoLocal));
-        when(surtidoRepository.save(any(Surtido.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            Local local = new Local();
+            local.setId(localId);
 
-        Surtido creado = surtidoService.crearSurtido(surtidoDTO, localId);
+            ProductoLocal productoLocal = new ProductoLocal();
+            productoLocal.setProducto(producto);
+            productoLocal.setLocal(local);
+            productoLocal.setStock(3);
 
-        assertThat(creado).isNotNull();
-        assertThat(creado.getProductosSurtidos()).hasSize(1);
+            // Simular llamadas
+            when(localRepository.findById(localId)).thenReturn(Optional.of(local));
+            when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
+            when(productoBodegaRepository.findByProductoId(1L)).thenReturn(productoBodega);
+            when(productoLocalRepository.findByProductoIdAndLocalId(1L, localId)).thenReturn(Optional.of(productoLocal));
+            when(surtidoRepository.save(any(Surtido.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        verify(productoBodegaRepository).save(any());
-        verify(productoLocalRepository).save(any());
+            Surtido creado = surtidoService.crearSurtido(surtidoDTO, localId);
+
+            assertThat(creado).isNotNull();
+            assertThat(creado.getProductosSurtidos()).hasSize(1);
+
+            verify(productoBodegaRepository).save(any());
+            verify(productoLocalRepository).save(any());
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Crear surtido",
+                        passed,
+                        "Automatizado - Verifica que se cree correctamente un surtido"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
     void testCrearSurtido_conStockInsuficiente() {
-        SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
-        productoDTO.setProductoId(1L);
-        productoDTO.setCantidad(100); // más que el stock
+        boolean passed = false;
+        try{
 
-        SurtidoDTO surtidoDTO = new SurtidoDTO();
-        surtidoDTO.setFechaSurtido(LocalDateTime.now());
-        surtidoDTO.setProductos(List.of(productoDTO));
+            SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
+            productoDTO.setProductoId(1L);
+            productoDTO.setCantidad(100); // más que el stock
 
-        Long localId = 1L;
-        Producto producto = new Producto();
-        producto.setId(1L);
-        ProductoBodega productoBodega = new ProductoBodega();
-        productoBodega.setProducto(producto);
-        productoBodega.setStock(10);
-        Local local = new Local();
-        local.setId(localId);
+            SurtidoDTO surtidoDTO = new SurtidoDTO();
+            surtidoDTO.setFechaSurtido(LocalDateTime.now());
+            surtidoDTO.setProductos(List.of(productoDTO));
 
-        when(localRepository.findById(localId)).thenReturn(Optional.of(local));
-        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
-        when(productoBodegaRepository.findByProductoId(1L)).thenReturn(productoBodega);
+            Long localId = 1L;
+            Producto producto = new Producto();
+            producto.setId(1L);
+            ProductoBodega productoBodega = new ProductoBodega();
+            productoBodega.setProducto(producto);
+            productoBodega.setStock(10);
+            Local local = new Local();
+            local.setId(localId);
 
-        assertThatThrownBy(() -> surtidoService.crearSurtido(surtidoDTO, localId))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Stock insuficiente");
+            when(localRepository.findById(localId)).thenReturn(Optional.of(local));
+            when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
+            when(productoBodegaRepository.findByProductoId(1L)).thenReturn(productoBodega);
+
+            assertThatThrownBy(() -> surtidoService.crearSurtido(surtidoDTO, localId))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("Stock insuficiente");
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Creacion surtido sin stock",
+                        passed,
+                        "Automatizado - Verifica que no se cree un surtido sin stock de producto"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Test
     void testCrearSurtido_productoNoExiste() {
-        SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
-        productoDTO.setProductoId(999L);
-        productoDTO.setCantidad(1);
 
-        SurtidoDTO surtidoDTO = new SurtidoDTO();
-        surtidoDTO.setFechaSurtido(LocalDateTime.now());
-        surtidoDTO.setProductos(List.of(productoDTO));
+        boolean passed = false;
+        try{
 
-        when(localRepository.findById(anyLong())).thenReturn(Optional.of(new Local()));
-        when(productoRepository.findById(999L)).thenReturn(Optional.empty());
+            SurtidoProductoDTO productoDTO = new SurtidoProductoDTO();
+            productoDTO.setProductoId(999L);
+            productoDTO.setCantidad(1);
 
-        assertThatThrownBy(() -> surtidoService.crearSurtido(surtidoDTO, 1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Producto no encontrado");
+            SurtidoDTO surtidoDTO = new SurtidoDTO();
+            surtidoDTO.setFechaSurtido(LocalDateTime.now());
+            surtidoDTO.setProductos(List.of(productoDTO));
+
+            when(localRepository.findById(anyLong())).thenReturn(Optional.of(new Local()));
+            when(productoRepository.findById(999L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> surtidoService.crearSurtido(surtidoDTO, 1L))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("Producto no encontrado");
+
+            passed = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try{
+                TestRailClient client = new TestRailClient(
+                        "https://codigoabiertop.testrail.io",
+                        "codigo.abierto.p@gmail.com",
+                        "pknkko2Hs9S8IPUANOzE-KVHY/dyV3IhGvtilMXUV"
+                );
+                TestRailReporter reporter = new TestRailReporter(client, 3, 5, 36);
+                reporter.reportResultPerTest(
+                        "Creacion de surtido sin existir producto",
+                        passed,
+                        "Automatizado - Verifica que no se cree correctamente un surtido sin existir el producto asociado"
+                );
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 }
