@@ -107,4 +107,34 @@ public class VentaService {
         return respuesta;
     }
 
+    public List<VentaHistorialDTO> obtenerHistorialDeVentas() {
+        List<Venta> ventas = ventaRepository.findAll();
+
+        List<VentaHistorialDTO> historial = new ArrayList<>();
+
+        for (Venta venta : ventas) {
+            VentaHistorialDTO dto = new VentaHistorialDTO();
+            dto.setNombreUsuario(venta.getUsuario().getUsername());
+            dto.setFecha(venta.getFecha());
+            dto.setTotal(venta.getTotal());
+
+            List<VentaDetalle> detalles = ventaDetalleRepository.findByVentaId(venta.getId());
+
+            List<VentaProductoHistorialDTO> productos = new ArrayList<>();
+            for (VentaDetalle detalle : detalles) {
+                VentaProductoHistorialDTO prod = new VentaProductoHistorialDTO();
+                prod.setNombreProducto(detalle.getProductoLocal().getProducto().getNombre());
+                prod.setCantidad(detalle.getCantidad());
+                prod.setPrecioUnitario(detalle.getPrecioUnitario());
+                productos.add(prod);
+            }
+
+            dto.setProductos(productos);
+            historial.add(dto);
+        }
+
+        return historial;
+    }
+
+
 }
