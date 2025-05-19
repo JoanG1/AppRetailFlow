@@ -2,6 +2,7 @@ package com.tuempresa.retailflow.controller;
 
 import com.tuempresa.retailflow.dto.LoginRequestDTO;
 import com.tuempresa.retailflow.dto.RegisterRequestDTO;
+import com.tuempresa.retailflow.dto.TokenDTO;
 import com.tuempresa.retailflow.service.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -21,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request) {
-        String token = authService.login(request);
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginRequestDTO request) {
+        TokenDTO token = authService.login(request);
         return ResponseEntity.ok(token);
     }
 

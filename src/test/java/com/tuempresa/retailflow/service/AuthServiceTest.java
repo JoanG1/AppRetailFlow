@@ -4,6 +4,7 @@ import com.tuempresa.retailflow.Enum.Rol;
 import com.tuempresa.retailflow.config.JwtService;
 import com.tuempresa.retailflow.dto.LoginRequestDTO;
 import com.tuempresa.retailflow.dto.RegisterRequestDTO;
+import com.tuempresa.retailflow.dto.TokenDTO;
 import com.tuempresa.retailflow.entity.Usuario;
 import com.tuempresa.retailflow.repository.UsuarioRepository;
 import com.tuempresa.retailflow.testRail.TestRailClient;
@@ -56,10 +57,10 @@ class AuthServiceTest {
             when(jwtService.generateToken("usuario")).thenReturn("jwt-token");
 
             // Act
-            String result = authService.login(loginRequest);
-
+             TokenDTO result = authService.login(loginRequest);
+             String token = result.getToken();
             // Assert
-            assertEquals("jwt-token", result);
+            assertEquals("jwt-token", token);
             passed = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,12 +91,12 @@ class AuthServiceTest {
             // Arrange
             LoginRequestDTO loginRequest = new LoginRequestDTO();
             loginRequest.setUsername("usuario");
-            loginRequest.setPassword("contrasena");
+            loginRequest.setPassword("Stejerosam#77");
 
             Usuario usuario = new Usuario(1L, "usuario", "hashedPassword", Rol.CLIENTE);
 
             when(usuarioRepository.findByUsername("usuario")).thenReturn(Optional.of(usuario));
-            when(passwordEncoder.matches("contrasena", "hashedPassword")).thenReturn(false);
+            when(passwordEncoder.matches("Stejerosam#77", "hashedPassword")).thenReturn(false);
 
             // Act & Assert
             ResponseStatusException exception = assertThrows(ResponseStatusException.class,
@@ -133,10 +134,10 @@ class AuthServiceTest {
             // Arrange
             RegisterRequestDTO registerRequest = new RegisterRequestDTO();
             registerRequest.setUsername("nuevoUsuario");
-            registerRequest.setPassword("clave");
+            registerRequest.setPassword("Stejerosam#77");
 
             when(usuarioRepository.findByUsername("nuevoUsuario")).thenReturn(Optional.empty());
-            when(passwordEncoder.encode("clave")).thenReturn("claveCodificada");
+            when(passwordEncoder.encode("Stejerosam#77")).thenReturn("claveCodificada");
 
             // Act
             authService.register(registerRequest);
@@ -181,7 +182,7 @@ class AuthServiceTest {
             // Arrange
             RegisterRequestDTO registerRequest = new RegisterRequestDTO();
             registerRequest.setUsername("usuarioExistente");
-            registerRequest.setPassword("clave");
+            registerRequest.setPassword("Stejerosam#77");
 
             when(usuarioRepository.findByUsername("usuarioExistente"))
                     .thenReturn(Optional.of(new Usuario()));

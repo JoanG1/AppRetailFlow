@@ -3,6 +3,7 @@ package com.tuempresa.retailflow.service;
 import com.tuempresa.retailflow.Enum.Rol;
 import com.tuempresa.retailflow.dto.LoginRequestDTO;
 import com.tuempresa.retailflow.dto.RegisterRequestDTO;
+import com.tuempresa.retailflow.dto.TokenDTO;
 import com.tuempresa.retailflow.entity.Usuario;
 import com.tuempresa.retailflow.repository.UsuarioRepository;
 import com.tuempresa.retailflow.config.JwtService;
@@ -26,11 +27,15 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String login(LoginRequestDTO request) {
+    public TokenDTO login(LoginRequestDTO request) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(request.getUsername());
 
         if (usuarioOpt.isPresent() && passwordEncoder.matches(request.getPassword(), usuarioOpt.get().getPassword())) {
-            return jwtService.generateToken(usuarioOpt.get().getUsername());
+            TokenDTO LoginInfo = new TokenDTO();
+            LoginInfo.setToken(jwtService.generateToken(usuarioOpt.get().getUsername()));
+            LoginInfo.setUsuarioId(usuarioOpt.get().getId());
+
+            return LoginInfo;
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas"); //Envia un codigo 401 UNAUTHORIZED
     }
