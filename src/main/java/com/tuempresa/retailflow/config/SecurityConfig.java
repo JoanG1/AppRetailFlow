@@ -64,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {  // ✅ Agregado para CORS
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5174","http://localhost:5173","http://149.50.150.130")); // Frontend permitido
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5174","http://localhost:5173","http://149.50.150.130", "http://149.50.150.130:3000", "http://codigo.abierto.online")); // Frontend permitido
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true); // Habilita envío de cookies o tokens
