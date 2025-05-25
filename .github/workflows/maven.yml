@@ -1,4 +1,4 @@
-name: Maven Build and Test
+name: Maven Build, Test, and Docker Push
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-test-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,12 @@ jobs:
 
       - name: Build and run tests
         run: mvn clean install
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_USERNAME }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t joang1/ideaprojects-backend:latest .
+
+      - name: Push Docker image
+        run: docker push joang1/ideaprojects-backend:latest
