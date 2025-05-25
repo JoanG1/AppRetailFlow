@@ -26,7 +26,7 @@ jobs:
         run: mvn clean install
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_USERNAME }}" | docker login -u joang1 --password-stdin
+        run: echo dckr_pat_hS0f1aMwMm87VNkY841Qoeja00w | docker login -u joang1 --password-stdi
 
       - name: Build Docker image
         run: docker build -t joang1/ideaprojects-backend:latest .
