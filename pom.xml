@@ -101,13 +101,6 @@
             <version>4.23.1</version>
         </dependency>
 
-        <!-- HTTP Client para conexión API REST -->
-        <dependency>
-            <groupId>org.apache.httpcomponents.client5</groupId>
-            <artifactId>httpclient5</artifactId>
-            <version>5.3</version>
-        </dependency>
-
         <!-- JSON parser -->
         <dependency>
             <groupId>org.json</groupId>
