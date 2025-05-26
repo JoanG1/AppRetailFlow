@@ -23,7 +23,7 @@ public class BaseTest {
         String tempProfileDir = Files.createTempDirectory("chrome-profile").toString();
         options.addArguments("--user-data-dir=" + tempProfileDir);
 
-        //options.addArguments("--headless=new"); // Para entornos sin GUI (como GitHub Actions)
+        options.addArguments("--headless=new"); // Para entornos sin GUI (como GitHub Actions)
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
