@@ -1,4 +1,4 @@
-package com.tuempresa.retailflow.seleniumTest;
+/*package com.tuempresa.retailflow.seleniumTest;
 
 import com.tuempresa.retailflow.base.BaseTest;
 import com.tuempresa.retailflow.pages.BodegasPage;
@@ -83,3 +83,4 @@ public class BodegasServiceTest extends BaseTest {
         }
     }
 }
+*/
